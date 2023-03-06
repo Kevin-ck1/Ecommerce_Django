@@ -1,0 +1,51 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>{{type}}</h2>
+
+    <div class="row m-2">
+        {% for listing in listings %}
+            <div class="col-6 col-md-4 col-lg-3 mb-5">
+                <div class="border rounded shadow-sm">
+                    <div class="embed-responsive embed-responsive-4by3 bg-secondary">
+                        <a href="{%url 'listing' listing.id %}" class="text-white"><img src="{{listing.photo}}" alt="{{listing.title}}" class="card-img-top embed-responsive-item text-center"></a>
+                    </div>
+                    <div class="p-4">
+                        <h5><a href="{%url 'listing' listing.id %}" class="text-dark text-uppercase">{{listing.title}}</a></h5>
+                        <p class="small text-muted">{{listing.description}}</p>
+                        <div class="d-flex align-items-center justify-content-between rounded bg-light px-1 py-1 mt-4">
+                            <div>
+                                <p class="small pt-3">
+                                    <span class="text-muted">Current Bid:</span>
+                                    <span class="font-weight-bold">KSH {{listing.current_bid}} </span>
+                                </p>
+                            </div>
+                            {% if user != listing.creator %}
+                            <div class="badge px-3 ">
+                                {% if listing.display_button %}
+                                <form action="{% url 'watchlist' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input name="wList" type="text" value="{{listing.id}}" hidden>
+                                    <input name="add_remove" type="number" value="1" hidden>
+                                    <input name="page" type="number" value="1" hidden>
+                                    <input class="btn-success rounded-pill" type="submit" value="+ Watchlist">
+                                </form>
+                                {%else%}
+                                <p class="text-success pt-3">In Watchlist</p>
+                                {%endif%}
+                            </div>
+                            {%else%}
+                            <div class="badge">
+                                <p class="text-success pt-3">Owner</p>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+{% endblock %}

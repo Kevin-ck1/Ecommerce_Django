@@ -1,0 +1,8 @@
+body {
+    padding: 10px;
+}
+
+.embed-responsive .card-img-top {
+    object-fit: cover;
+}
+

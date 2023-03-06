@@ -1,0 +1,168 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+   <div class="row">
+       <div class="col-6 row">
+           <div class="col-2"></div>
+            <div class="col-8">
+                <div class="embed-responsive embed-responsive-4by3 bg-secondary p-5">
+                    <img src="{{listing.photo}}" alt="{{listing.title}}" class="card-img-top embed-responsive-item text-center text-uppercase">
+                 </div>
+            </div>
+       </div>
+       {%if user == listing.creator %}
+       <div class="col-6 px-5">
+        <div class="d-flex align-items-center justify-content-between">
+            <div><h2 class="text-uppercase">{{listing.title}} <span class="text-danger">{{closed}}</span> </h2></div>
+            <div>
+                {% if listing.listing_open %}
+                {% if cButton %}
+                <form action="{% url 'close' %}" method="POST">
+                    {% csrf_token %}
+                    <input name="lastBid" type="text" value="{{listing.id}}" hidden>
+                    <input class="btn-danger" type="submit" value="Close Listing">
+                </form>
+                {%else%}
+                <p class="text-info">Waiting for Bids</p>
+                {%endif%}
+                {%endif%}
+            </div>
+        </div>
+        <div class="col-12">
+            <p>
+                <span class="text-muted">Current Bid:</span>
+                <span class="font-weight-bold">KSH {{listing.current_bid}} </span>
+            </p>
+            <p>
+                <span class="text-muted small">Inital Price:</span>
+                <span class="font-weight-bold small">KSH {{listing.start_price}} </span>
+            </p>
+            {% if info %}
+            <h3>Top-Bidder Info:  </h3>
+            <p>Username: {{info.winner_Username}}</p>
+            <p>Email: {{info.winner_Email}} </p>
+            {%endif%}
+        </div>
+       </div>
+        {% else %}
+        {% if status %}
+        <div class="col-6 px-5">
+            <div class="d-flex align-items-center justify-content-between">
+                <div><h2 class="text-uppercase">{{listing.title}}</h2></div>
+                <div>
+                    {%if button %}
+                    <form action="{% url 'watchlist' %}" method="POST">
+                        {% csrf_token %}
+                        <input name="wList" type="text" value="{{listing.id}}" hidden>
+                        <input name="page" type="number" value="2" hidden>
+                        <input name="add_remove" type="number" value="1" hidden>
+                        <input class="btn-success" type="submit" value="+ Watchlist">
+                    </form>
+                    {%else%}
+                    <form action="{% url 'watchlist' %}" method="POST">
+                        {% csrf_token %}
+                        <input name="wList" type="text" value="{{listing.id}}" hidden>
+                        <input name="page" type="number" value="2" hidden>
+                        <input name="add_remove" type="number" value="2" hidden>
+                        <input class="btn-danger" type="submit" value="- Watchlist">
+                    </form>
+                    {%endif%}
+                </div>
+            </div>
+            <div class="row bg-light my-5 rounded py-5">
+                <div class="col-12">
+                    <p>
+                        <span class="text-muted">Current Bid:</span>
+                        <span class="font-weight-bold">KSH {{listing.current_bid}} </span>
+                        </p>
+                        <p class="small">Min-Bid: KSH{{min_bid}} </p>
+                </div>
+                <div class="col-12">
+                    <form action="{% url 'bidlist' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="d-flex align-items-center justify-content-around">
+                            <div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">KSH</span>
+                                </div>
+                                <input name="bItem" type="text" value="{{listing.id}}" hidden>
+                                <input class="form-control" type="number" name="bid_price" min="{{min_bid}}">
+                            </div>
+                            </div>
+                            <div><input class="btn-primary rounded" type="submit" value="Place BID"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <p>{{listing.description}}</p>
+        </div>
+        {%else%}
+        {% if user.username == info.winner_Username %}
+        <div class="col-6 px-5">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h2 class="text-uppercase"> {{listing.title}} <span class="text-danger">{{closed}}</span> </h2>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-info"> You are the winner of the bid </h4>
+                <p>
+                    <span class="text-muted">Wining Bid Price:</span>
+                    <span class="font-weight-bold">KSH {{listing.current_bid}} </span>
+                </p>
+                <p>Contact seller for further details</p>
+                <p>Sellers Details</p>
+                <p>Username:{{info.author_Username}}</p>
+                <p>Email: {{info.author_Email}}</p>
+            </div>
+        </div>
+        
+        {%else%}
+        <div class="col-6 px-5">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h2 class="text-uppercase"> {{listing.title}} <span class="text-danger">{{closed}}</span> </h2>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-info"> Sorry Listing No Longer Available </h4>
+            </div>
+        </div>
+        {%endif%}
+        {%endif%}
+        {%endif%}
+        <div class="col-12 mt-3 row">
+            <div class="col-md-2"></div>
+            <div class="col-sm-12 col-md-8">
+                <h3>Comments on {{listing.title}}</h3>
+                <ul class="list-group row">
+                    <li class="list-group-item">
+                        <form action="{% url 'comments' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="d-flex align-items-center justify-content-around">
+                                <div class="input-group mb-3">
+                                    <input name="listing_id" type="text" value="{{listing.id}}" hidden>
+                                    <input name="comment" type="text" class="form-control" placeholder="Place Comment">
+                                    <div class="input-group-append">
+                                      <button class="btn btn-outline-secondary" type="submit">Post</button>
+                                    </div>
+                                  </div>
+                            </div>
+                        </form>
+                    </li>
+                    {% for comment in comments %}
+                    <li class="list-group-item py-0">
+                        <p class="d-flex align-items-center py-0 my-0">{{comment.comment}}</p>
+                        <span class="small text-muted">by: {{comment.commentor}}</span>
+                    </li>
+                    {%endfor%}
+                </ul>
+            </div>
+        </div>
+   </div>
+
+{% endblock %}

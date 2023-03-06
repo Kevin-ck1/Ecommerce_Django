@@ -1,0 +1,57 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>Create Listings</h2>
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+    <form action="{% url 'create' %}" method="post">
+        {% csrf_token %}
+        <div class="form-row mx-2">
+            <div class="form-group col-md-4">
+                <label for="listing_title">Title</label>
+                <input autofocus class="form-control" type="text" name="listing_title" placeholder="Title"required>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="form-group col-md-2">
+                <label for="listing_category">Choose Category</label>
+                <select name="listing_category" class="form-control">
+                    <option hidden selected value=1>Select Category</option>
+                    {% for category in categories %}
+                        <option value="{{category.id}}">{{category}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3"></div>
+            <div class="form-group col-md-7">
+                <label for="listing_description">Description</label>
+                <textarea class="form-control" name="listing_description" placeholder="Give a brief description of the product" cols="30" rows="2"required></textarea>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="form-group col-md-7">
+                <label for="listing_image"></label>Image Url</label>
+                <input autofocus class="form-control" type="url" name="listing_image"placeholder="Input Image url if availabe">
+            </div>
+            <div class="col-md-5"></div>
+            <div class="form-group col-md-2">
+                <label for="start_bid">Set Starting Bid</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">KSH</span>
+                    </div>
+                    <input autofocus class="form-control" type="number" name="start_bid" required>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="form-group mt-2">
+                <label for="start_bid"></label>
+                <input class="btn btn-primary form-control" type="submit" value="Add Listing">
+            </div>
+        </div>
+    </form>
+
+
+{% endblock %}
