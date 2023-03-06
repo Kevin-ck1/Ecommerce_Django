@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'commerce.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 #We are to copy out the sql database
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -94,7 +94,7 @@ import dj_database_url
 DATABASES = {
     'default': dj_database_url.parse(env('DATABASE_URL'))
 }
-'''
+
 AUTH_USER_MODEL = 'auctions.User'
 
 # Password validation
